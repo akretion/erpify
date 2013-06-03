@@ -4,7 +4,7 @@ erpify
 example usage:
 
 ```ruby
-require 'liquid'
+require 'locomotive_liquid'
 require 'ooor'
 require 'erpify'
 
