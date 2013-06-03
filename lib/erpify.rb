@@ -24,7 +24,7 @@ module Erpify
             @to = $1
             markup.scan(::Liquid::TagAttributes) { |key, value| @options[key.to_sym] = value.gsub(/"|'/, '') }
           else
-            raise ::Liquid::SyntaxError.new("Syntax Error in ErpObj Tag")
+            raise ::Liquid::SyntaxError.new("Syntax Error in ErpFind Tag")
           end
           super
         end
