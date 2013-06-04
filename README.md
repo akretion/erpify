@@ -4,8 +4,6 @@ erpify
 example usage:
 
 ```ruby
-require 'locomotive_liquid'
-require 'ooor'
 require 'erpify'
 
 url = 'http://localhost:8069/xmlrpc'
@@ -16,14 +14,14 @@ Ooor.default_config = {url: url, username: username, password: password, databas
 
 template = <<-eos
 this is an example of a Liquid template
-now we find some products in OpenERP {% erp_find products = object: 'product.product', domain:"[]" %}
-now let's show them:
-{% for p in products %}
-{{p.name}}
+{% with_domain type:'service' %}
+{% for product in ooor['product.product'] %}
+{{product.name}} - {{product.categ_id.name}}
 {% endfor %}
+{% endwith_domain %}
 the end!
 eos
 
 @template = Liquid::Template.parse(template) # Parses and compiles the template
-puts @template.render
+puts @template.render("ooor" => Erpify::Liquid::Drops::Ooor.new)
 ```
