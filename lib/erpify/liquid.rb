@@ -1,4 +1,4 @@
-require 'locomotive_liquid'
+require 'locomotivecms_solid'
 require 'erpify/liquid/drops/base'
 
 %w{. tags drops}.each do |dir|

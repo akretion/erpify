@@ -12,47 +12,44 @@ module Erpify
       #   {% endfor %}
       # {% endwith_domain %}
       #
-      class WithDomain < ::Liquid::Block
+      class WithDomain < Solid::Block
 
-        TagAttributes = /(\w+|\w+\.\w+)\s*\:\s*(#{::Liquid::QuotedFragment})/
+        OPERATORS = ['=', '!=', '<=', '<', '>', '>=', '=?', '=like', '=ilike', 'like', 'not like', 'ilike', 'not ilike', 'in', 'not in', 'child_of']
 
-        def initialize(tag_name, markup, tokens, context)
-          @attributes = HashWithIndifferentAccess.new
-          markup.scan(TagAttributes) do |key, value|
-#            k, operator = extract_operator(key)
-#            @attributes[k] = [k, operator, value]
-             @attributes[key] = value
-          end
-          super
+        SYMBOL_OPERATORS_REGEXP = /(\w+\.(#{OPERATORS.join('|')})){1}\s*\:/
+
+        # register the tag
+        tag_name :with_domain
+
+        def initialize(tag_name, arguments_string, tokens, context = {})
+          # convert symbol operators into valid ruby code
+          arguments_string.gsub!(SYMBOL_OPERATORS_REGEXP, ':"\1" =>')
+
+          super(tag_name, arguments_string, tokens, context)
         end
 
-        def render(context)
-          context.stack do
-            context['with_domain'] = decode(@attributes.clone, context)
-            render_all(@nodelist, context)
-          end
-        end
-
-        private
-
-        def decode(attributes, context)
-          attributes.each_pair do |key, value|
-            attributes[key] = context[value]
+        def display(options = {}, &block)
+          current_context.stack do
+            current_context['with_domain'] = self.decode(options)
+            yield
           end
         end
 
-        def extract_operator(key)
-          if %w(gt gte in lt lte ne eq ilike).include?(key.split('.').last)
-            operator = key.split('.').last
-            key = key.gsub(/\.#{operator}$/, '')
-          else
-            operator = "="
+        protected
+
+        def decode(options)
+          domain = []
+          options.each do |key, value|
+            _key, _operator = key.to_s.split('.')
+            if _operator
+              domain << [_key, _operator, value]
+            else
+              domain << [_key, '=', value]
+            end
           end
-          return key, operator
+          return domain
         end
       end
-
-      ::Liquid::Template.register_tag('with_domain', WithDomain)
     end
   end
 end

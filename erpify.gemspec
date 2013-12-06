@@ -13,6 +13,6 @@ Gem::Specification.new do |s|
 
   s.files = Dir["{lib}/**/*"] + ["MIT-LICENSE", "README.md", "Rakefile"]
 
-  s.add_dependency 'locomotive_liquid',               '> 2.4.0'
+  s.add_dependency "locomotivecms_solid"
   s.add_dependency "ooor"
 end
