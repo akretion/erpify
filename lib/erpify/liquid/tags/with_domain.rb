@@ -30,7 +30,11 @@ module Erpify
 
         def display(options = {}, &block)
           current_context.stack do
-            current_context['with_domain'] = self.decode(options)
+            if options.is_a?(Array)
+              current_context['with_domain'] = options
+            else
+              current_context['with_domain'] = self.decode(options)
+            end
             yield
           end
         end
