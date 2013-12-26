@@ -15,22 +15,6 @@ module Erpify
           end
         end
 
-        protected
-
-        def filter_and_order_list(model)
-          if @context['with_domain']
-            conditions  = HashWithIndifferentAccess.new(@context['with_domain'])
-            order_by    = conditions.delete(:order_by).try(:split)
-            offset      = conditions.delete(:offset)
-            limit       = conditions.delete(:limit)
-            fields      = conditions.delete(:fields).try(:split)
-            context = @context['context'] #FIXME not very cool
-            model.where(conditions).offset(offset).limit(limit).order(order_by).all(fields: fields, context: context || {})
-          else
-            model.all(context: @context['context'] || {})
-          end
-        end
-
       end
     end
   end
