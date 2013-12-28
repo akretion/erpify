@@ -31,9 +31,16 @@ module Erpify
         def display(options = {}, &block)
           current_context.stack do
             if options.is_a?(Array)
-              current_context['with_domain'] = options
+              current_context['with_domain'] = {domain: options}
+            elsif options[0].is_a?(Array) && options[1].is_a?(Hash)
+              current_context['with_domain'] = options[1].merge({domain: options[0]})
             else
-              current_context['with_domain'] = self.decode(options)
+              if options[:domain]
+                current_context['with_domain'] = options
+              else
+                options[:domain] = self.decode(options.except(:fields, :order_by, :offset, :limit, :fields, :include, :only, :context))
+                current_context['with_domain'] = options
+              end
             end
             yield
           end

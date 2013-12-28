@@ -37,14 +37,14 @@ module Erpify
         end 
     
         def filter_and_order_list(model)
-          if @context['with_domain']
-            conditions  = @context['with_domain']
-            order_by    = conditions.delete(:order_by).try(:split)
-            offset      = conditions.delete(:offset)
-            limit       = conditions.delete(:limit)
-            fields      = conditions.delete(:fields).try(:split)
-            context = @context['context'] #FIXME not very cool
-            model.where(conditions).offset(offset).limit(limit).order(order_by).all(fields: fields, context: context || {})
+          if options = @context['with_domain']
+            conditions  = options.delete(:domain)
+            order_by    = options.delete(:order_by).try(:split)
+            offset      = options.delete(:offset)
+            limit       = options.delete(:limit)
+            options[:fields] = false unless options[:fields]
+            options[:context] = {} unless options[:context] #TODO improve
+            model.where(conditions).offset(offset).limit(limit).order(order_by).all(options)
           else
             model.all(context: @context['context'] || {})
           end
