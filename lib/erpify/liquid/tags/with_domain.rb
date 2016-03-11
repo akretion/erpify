@@ -21,11 +21,11 @@ module Erpify
         # register the tag
         tag_name :with_domain
 
-        def initialize(tag_name, arguments_string, tokens, context = {})
+        def initialize(name, markup, options)
           # convert symbol operators into valid ruby code
-          arguments_string.gsub!(SYMBOL_OPERATORS_REGEXP, ':"\1" =>')
+          markup.gsub!(SYMBOL_OPERATORS_REGEXP, ':"\1" =>')
 
-          super(tag_name, arguments_string, tokens, context)
+          super(name, markup, options)
         end
 
         def display(options = {}, &block)
@@ -60,6 +60,8 @@ module Erpify
           end
           return domain
         end
+
+      ::Liquid::Template.register_tag('with_domain'.freeze, WithDomain)
       end
     end
   end
