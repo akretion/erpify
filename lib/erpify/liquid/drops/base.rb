@@ -2,7 +2,7 @@
 module Erpify
   module Liquid
     module Drops
-      class Base < ::Liquid::Drop
+      class OoorModel < ::Liquid::Drop
 
         @@forbidden_attributes = %w{_id _version _index}
 
@@ -16,6 +16,16 @@ module Erpify
           (@_source.respond_to?(:id) ? @_source.id : nil) || 'new'
         end
 
+        def before_method(method_or_key)
+          if not @@forbidden_attributes.include?(method_or_key.to_s)
+            session =_source || Ooor.default_session
+            model = session.const_get(method_or_key)
+            filter_and_order_list(model)
+          else
+            nil
+          end
+        end
+
         # converts an array of records to an array of liquid drops
         def self.liquify(*records, &block)
           i = -1
@@ -26,16 +36,16 @@ module Erpify
               all << (block ? block.call(*attrs) : r.to_liquid)
               all
             end
-          records.compact!   
+          records.compact!
           records
         end
 
         protected
 
-        def liquify(*records, &block) 
+        def liquify(*records, &block)
           self.class.liquify(*records, &block)
-        end 
-    
+        end
+
         def filter_and_order_list(model)
           if options = @context['with_domain']
             conditions  = options.delete(:domain)

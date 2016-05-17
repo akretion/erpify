@@ -28,9 +28,8 @@ puts @template.render("ooor_model" => Erpify::Liquid::Drops::OoorModel.new(sessi
 ```
 
 
-Note that you can also use the OoorDefaultModel drop with the 'ooor_default_model' key instead.
-OoorDefaultModel doesn't need an Ooor session in its constructor, it will use the session of the Ooor.default_config instead.
-So you can use OoorDefaultModel for public anonymous access in your website for instance, while objects
-requiring a user authentication (with Devise for instance) will use the OoorModel drop instead.
+Note that you can typically put a per user session in the 'ooor_model' drop (with a Devise mapping for instance) and a global
+public session instead in an other drop called 'ooor_public_model' so you maximize the cache usage for data that
+is not user specific.
 So 'ooor_model' and 'ooor_public_model' are just the sames concepts as in the OOOREST RequestHelper you may use in your Rails application inside your views or controllers. Nothing even prevents you to use the two gems together in the same app.
 How cool is that?
