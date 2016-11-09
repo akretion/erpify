@@ -28,8 +28,10 @@ module Erpify
         if groupable?(input)
           input.group_by do |item|
           item_prop = item_property(item, property)
-          if item.is_a? Ooor::Base
+          if item_prop.is_a? Ooor::Base
             [item_prop.id, item_prop._display_name]
+          elsif item_prop.is_a?(Array) && item_prop.size ==2
+            item_prop
           else
             [nil, item_prop.to_s]
           end
